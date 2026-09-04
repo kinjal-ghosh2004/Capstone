@@ -66,7 +66,8 @@ def analyze_dataset(df, text_col, label_col, task_type, name):
     sns.countplot(y='Mapped_Label', data=df)
     plt.title(f'Label Distribution for {name}')
     
-    out_dir = 'd:/Capstone/results/sentiment_eda' if task_type == 'sentiment' else 'd:/Capstone/results/hate_eda'
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    out_dir = os.path.join(base_dir, 'results', 'sentiment_eda') if task_type == 'sentiment' else os.path.join(base_dir, 'results', 'hate_eda')
     os.makedirs(out_dir, exist_ok=True)
     plt.savefig(os.path.join(out_dir, f'{name}_label_dist.png'))
     plt.close()
@@ -90,24 +91,26 @@ def analyze_dataset(df, text_col, label_col, task_type, name):
     return summary
 
 def main():
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    
     # 1. THAR (Hate)
-    df_thar = pd.read_csv('d:/Capstone/Datasets/Hate Speech Training/THAR/THAR-Dataset.csv')
+    df_thar = pd.read_csv(os.path.join(base_dir, 'Datasets', 'Hate Speech Training', 'THAR', 'THAR-Dataset.csv'))
     analyze_dataset(df_thar, 'Comment', 'SubTask1', 'hate', 'THAR')
     
     # 2. Dravidian (Hate) - Kannada
-    df_kan = pd.read_csv('d:/Capstone/Datasets/Hate Speech Training/Dravidian-Offensive-Language-Identification/Datasets/Kannada/kannada_offensive_train.csv', sep='\t', header=None, names=['Text', 'Label'])
+    df_kan = pd.read_csv(os.path.join(base_dir, 'Datasets', 'Hate Speech Training', 'Dravidian-Offensive-Language-Identification', 'Datasets', 'Kannada', 'kannada_offensive_train.csv'), sep='\t', header=None, names=['Text', 'Label'])
     analyze_dataset(df_kan, 'Text', 'Label', 'hate', 'Dravidian_Kannada')
     
     # 3. Dravidian (Hate) - Malayalam
-    df_mal = pd.read_csv('d:/Capstone/Datasets/Hate Speech Training/Dravidian-Offensive-Language-Identification/Datasets/Malayalam/mal_full_offensive_train.csv', sep='\t', header=None, names=['Text', 'Label'])
+    df_mal = pd.read_csv(os.path.join(base_dir, 'Datasets', 'Hate Speech Training', 'Dravidian-Offensive-Language-Identification', 'Datasets', 'Malayalam', 'mal_full_offensive_train.csv'), sep='\t', header=None, names=['Text', 'Label'])
     analyze_dataset(df_mal, 'Text', 'Label', 'hate', 'Dravidian_Malayalam')
     
     # 4. Dravidian (Hate) - Tamil
-    df_tam = pd.read_csv('d:/Capstone/Datasets/Hate Speech Training/Dravidian-Offensive-Language-Identification/Datasets/Tamil/tamil_offensive_full_train.csv', sep='\t', header=None, names=['Text', 'Label'])
+    df_tam = pd.read_csv(os.path.join(base_dir, 'Datasets', 'Hate Speech Training', 'Dravidian-Offensive-Language-Identification', 'Datasets', 'Tamil', 'tamil_offensive_full_train.csv'), sep='\t', header=None, names=['Text', 'Label'])
     analyze_dataset(df_tam, 'Text', 'Label', 'hate', 'Dravidian_Tamil')
 
     # 5. IndicSentiment
-    sent_dir = 'd:/Capstone/Datasets/Sentiment Training/IndicSentiment/data/validation'
+    sent_dir = os.path.join(base_dir, 'Datasets', 'Sentiment Training', 'IndicSentiment', 'data', 'validation')
     sent_data = []
     for f in os.listdir(sent_dir):
         if f.endswith('.json'):

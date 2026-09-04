@@ -3,7 +3,9 @@ from transformers import AutoTokenizer
 from torch.utils.data import DataLoader
 
 # IndicBERT tokenizer from local folder
-MODEL_NAME = "d:/Capstone/Datasets/Pretraining"
+import os
+base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+MODEL_NAME = os.path.join(base_dir, 'Datasets', 'Pretraining')
 
 def get_tokenizer(model_name=MODEL_NAME):
     """

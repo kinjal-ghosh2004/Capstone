@@ -90,7 +90,8 @@ def analyze_file(filepath):
         
     return metadata
 
-datasets_dir = 'd:/Capstone/Datasets'
+base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+datasets_dir = os.path.join(base_dir, 'Datasets')
 results = []
 for root, _, files in os.walk(datasets_dir):
     for f in files:
@@ -102,6 +103,8 @@ for root, _, files in os.walk(datasets_dir):
 df_res = pd.DataFrame(results)
 cols = ['Directory'] + [c for c in df_res.columns if c != 'Directory']
 df_res = df_res[cols]
-df_res.to_csv('d:/Capstone/results/dataset_audit.csv', index=False)
+out_dir = os.path.join(base_dir, 'results')
+os.makedirs(out_dir, exist_ok=True)
+df_res.to_csv(os.path.join(out_dir, 'dataset_audit.csv'), index=False)
 print(f"Audit complete. Processed {len(df_res)} files.")
 

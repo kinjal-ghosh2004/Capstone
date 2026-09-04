@@ -3,8 +3,10 @@ from data.tokenize_utils import get_tokenizer, tokenize_dataset, create_dataload
 
 def test():
     print("Loading THAR dataset...")
+    import os
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     # Load just a subset for quick testing
-    thar_ds = load_thar('d:/Capstone/Datasets/Hate Speech Training/THAR/THAR-Dataset.csv')
+    thar_ds = load_thar(os.path.join(base_dir, 'Datasets', 'Hate Speech Training', 'THAR', 'THAR-Dataset.csv'))
     thar_ds = thar_ds.select(range(100)) # take only 100 samples
     
     print("Loading tokenizer ai4bharat/indic-bert...")

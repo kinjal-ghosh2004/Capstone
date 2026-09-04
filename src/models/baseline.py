@@ -48,11 +48,14 @@ def run_baselines():
     
     tokenizer = get_tokenizer()
     
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+    
     # We will test on THAR (Hate Speech - binary) and IndicSentiment (Sentiment - 3 classes)
     
     # 1. THAR Hate Speech Baseline
     print("\n--- Hate Speech (THAR) Baseline ---")
-    thar_ds = load_thar('d:/Capstone/Datasets/Hate Speech Training/THAR/THAR-Dataset.csv')
+    thar_path = os.path.join(base_dir, 'Datasets', 'Hate Speech Training', 'THAR', 'THAR-Dataset.csv')
+    thar_ds = load_thar(thar_path)
     thar_ds = thar_ds.select(range(500)) # take a subset for quick baseline
     
     thar_tokenized = tokenize_dataset(thar_ds, tokenizer, max_length=128)
@@ -66,7 +69,8 @@ def run_baselines():
     
     # 2. Sentiment Baseline
     print("\n--- Sentiment (IndicSentiment Hindi) Baseline ---")
-    sent_ds = load_indic_sentiment('d:/Capstone/Datasets/Sentiment Training/IndicSentiment/data/validation/hi.json')
+    sent_path = os.path.join(base_dir, 'Datasets', 'Sentiment Training', 'IndicSentiment', 'data', 'validation', 'hi.json')
+    sent_ds = load_indic_sentiment(sent_path)
     sent_tokenized = tokenize_dataset(sent_ds, tokenizer, max_length=128)
     sent_loader = create_dataloader(sent_tokenized, batch_size=16, shuffle=False)
     
@@ -77,8 +81,9 @@ def run_baselines():
     print(f"Accuracy: {sent_acc:.4f}, F1 (Macro): {sent_f1:.4f}")
     
     # Save the output to results folder
-    os.makedirs('d:/Capstone/results', exist_ok=True)
-    with open('d:/Capstone/results/baseline_metrics.txt', 'w') as f:
+    out_dir = os.path.join(base_dir, 'results')
+    os.makedirs(out_dir, exist_ok=True)
+    with open(os.path.join(out_dir, 'baseline_metrics.txt'), 'w') as f:
         f.write("=== HATE SPEECH BASELINE (THAR) ===\n")
         f.write(f"Accuracy: {hate_acc:.4f}\n")
         f.write(f"F1 (Macro): {hate_f1:.4f}\n")
