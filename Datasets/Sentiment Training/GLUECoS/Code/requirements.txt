@@ -1,8 +1,3 @@
-torchvision 
-torchtext 
-transformers
-seqeval 
-sklearn 
-tensorboard
-datasets
-sacrebleu
+version https://git-lfs.github.com/spec/v1
+oid sha256:2b065181d9880490d604c3cbd0ca8951b8f87a9c6c7cde030d5ce7a309dd09ec
+size 85
