@@ -3,6 +3,7 @@ import os
 import sys
 import torch
 import numpy as np
+from datasets import ClassLabel
 from sklearn.metrics import accuracy_score, f1_score
 from transformers import AutoModelForSequenceClassification, Trainer, TrainingArguments, DataCollatorWithPadding, EarlyStoppingCallback
 import torch.nn as nn
@@ -77,6 +78,9 @@ def main():
         num_labels = 3
         
     print(f"Total samples: {len(dataset)}")
+    
+    # Cast label column to ClassLabel for stratification
+    dataset = dataset.cast_column('label', ClassLabel(num_classes=num_labels))
     
     # Train / Eval split
     split = dataset.train_test_split(test_size=0.1, seed=42, stratify_by_column='label')
