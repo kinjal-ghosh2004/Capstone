@@ -12,6 +12,13 @@ def normalize_text(text):
     # Lowercase the text
     text = text.lower()
     
+    # Remove HTML tags
+    text = re.sub(r'<[^>]+>', ' ', text)
+    
+    # Standardize elongated words (e.g., "booohoooo" -> "boohoo")
+    # Reduces 3 or more consecutive identical characters to 2
+    text = re.sub(r'(.)\1{2,}', r'\1\1', text)
+    
     # Remove multiple spaces
     text = re.sub(r'\s+', ' ', text)
     
