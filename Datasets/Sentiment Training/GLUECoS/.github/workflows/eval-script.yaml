@@ -1,0 +1,34 @@
+name: Eval script
+
+on:
+  pull_request_target:
+    branches: [ master ]
+
+jobs:
+  eval:
+    runs-on: [self-hosted, linux]
+
+    steps:
+    - name: Clean folder
+      run: rm -f results.zip
+    - name: Download results.zip
+      run: |
+          for x in {0..4}; do
+              wget https://github.com/$GITHUB_ACTOR/GLUECoS/raw/$GITHUB_HEAD_REF/results.zip -O results.zip || true
+              if [ -f results.zip ]; then
+                  echo "Result downloaded"
+                  break
+              else
+                  sleep 5
+                  if [ $x -eq 4 ]; then
+                      echo "Downloading results.zip failed"
+                      exit 1
+                  else
+                      echo "Trying download again"
+                  fi
+              fi
+          done
+    - name: Copy eval scripts
+      run: cp -r /root/code/ eval/
+    - name: Run Eval
+      run: cd eval && ./eval.sh ../results.zip

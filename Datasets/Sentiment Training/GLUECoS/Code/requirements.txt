@@ -1,0 +1,8 @@
+torchvision 
+torchtext 
+transformers
+seqeval 
+sklearn 
+tensorboard
+datasets
+sacrebleu

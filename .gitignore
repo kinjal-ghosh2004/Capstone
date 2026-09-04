@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# IDEs
+.vscode/
+.idea/
+.spyderproject
+.spyproject
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Project specific
+# Ignore the results directory so you don't accidentally upload massive trained models to GitHub!
+results/
+
