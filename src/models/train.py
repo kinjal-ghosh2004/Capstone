@@ -4,7 +4,6 @@ import sys
 import torch
 import numpy as np
 from datasets import ClassLabel
-from sklearn.metrics import accuracy_score, f1_score
 from transformers import AutoModelForSequenceClassification, Trainer, TrainingArguments, DataCollatorWithPadding, EarlyStoppingCallback
 import torch.nn as nn
 # allow imports from parent directory (src)
@@ -15,13 +14,29 @@ from data.tokenize_utils import get_tokenizer, tokenize_dataset, MODEL_NAME
 
 def compute_metrics(eval_pred):
     """
-    Computes accuracy and macro F1 score during evaluation.
+    Computes accuracy and macro F1 score during evaluation using pure NumPy.
     """
     logits, labels = eval_pred
     predictions = np.argmax(logits, axis=-1)
     
-    acc = accuracy_score(labels, predictions)
-    f1 = f1_score(labels, predictions, average='macro', zero_division=0)
+    # Accuracy
+    acc = np.mean(predictions == labels)
+    
+    # Macro F1
+    unique_classes = np.unique(np.concatenate((labels, predictions)))
+    f1s = []
+    for c in unique_classes:
+        tp = np.sum((predictions == c) & (labels == c))
+        fp = np.sum((predictions == c) & (labels != c))
+        fn = np.sum((predictions != c) & (labels == c))
+        
+        denominator = 2 * tp + fp + fn
+        if denominator == 0:
+            f1s.append(0.0)
+        else:
+            f1s.append(2 * tp / denominator)
+            
+    f1 = np.mean(f1s) if len(f1s) > 0 else 0.0
     
     return {
         'accuracy': acc,
@@ -64,17 +79,38 @@ def main():
     # 1. Load data
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
     
+    from datasets import concatenate_datasets
+    
     if args.task == 'hate':
-        print("Loading THAR Hate Speech dataset...")
-        dataset_path = os.path.join(base_dir, 'Datasets', 'Hate Speech Training', 'THAR', 'THAR-Dataset.csv')
-        dataset = load_thar(dataset_path)
+        print("Loading THAR and Dravidian Hate Speech datasets...")
+        ds_list = []
+        
+        # Load THAR
+        thar_path = os.path.join(base_dir, 'Datasets', 'Hate Speech Training', 'THAR', 'THAR-Dataset.csv')
+        thar_ds = load_thar(thar_path)
+        if thar_ds: ds_list.append(thar_ds)
+        
+        # Load Dravidian (Kannada, Malayalam, Tamil)
+        from data.loaders import load_all_dravidian
+        dravidian_base = os.path.join(base_dir, 'Datasets', 'Hate Speech Training', 'Dravidian-Offensive-Language-Identification', 'Datasets')
+        for split in ['train', 'dev']:
+            drav_ds = load_all_dravidian(dravidian_base, split=split)
+            if drav_ds: ds_list.append(drav_ds)
+            
+        dataset = concatenate_datasets(ds_list)
         num_labels = 2
     else:
-        print("Loading IndicSentiment dataset (Hindi Validation as train for test)...")
-        # Just an example path. Ideally, we would load all train splits.
-        # But we'll just use what we loaded earlier.
-        dataset_path = os.path.join(base_dir, 'Datasets', 'Sentiment Training', 'IndicSentiment', 'data', 'validation', 'hi.json')
-        dataset = load_indic_sentiment(dataset_path)
+        print("Loading ALL IndicSentiment datasets (test and validation splits across 13 languages)...")
+        indic_dir = os.path.join(base_dir, 'Datasets', 'Sentiment Training', 'IndicSentiment', 'data')
+        ds_list = []
+        for split in ['validation', 'test']:
+            split_dir = os.path.join(indic_dir, split)
+            if os.path.exists(split_dir):
+                for fname in os.listdir(split_dir):
+                    if fname.endswith('.json'):
+                        ds = load_indic_sentiment(os.path.join(split_dir, fname))
+                        if ds: ds_list.append(ds)
+        dataset = concatenate_datasets(ds_list)
         num_labels = 3
         
     print(f"Total samples: {len(dataset)}")
@@ -97,14 +133,18 @@ def main():
     
     # 2. Load Model
     print(f"Loading uninitialized sequence classification model with {num_labels} labels...")
-    model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=num_labels)
+    model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=num_labels, ignore_mismatched_sizes=True)
     
     output_dir = os.path.join(base_dir, 'results', 'models', args.task)
     
-    from sklearn.utils.class_weight import compute_class_weight
-    labels = train_ds['label']
-    class_weights = compute_class_weight(class_weight='balanced', classes=np.unique(labels), y=labels)
-    class_weights = list(class_weights)
+    labels = np.array(train_ds['label'])
+    class_weights = []
+    total_samples = len(labels)
+    n_classes_present = len(np.unique(labels))
+    for c in range(num_labels):
+        count = np.sum(labels == c)
+        weight = total_samples / (n_classes_present * count) if count > 0 else 0.0
+        class_weights.append(weight)
     
     # 3. Setup Training Arguments
     training_args = TrainingArguments(

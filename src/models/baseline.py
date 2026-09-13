@@ -61,7 +61,7 @@ def run_baselines():
     thar_tokenized = tokenize_dataset(thar_ds, tokenizer, max_length=128)
     thar_loader = create_dataloader(thar_tokenized, batch_size=16, shuffle=False)
     
-    model_hate = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=2)
+    model_hate = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=2, ignore_mismatched_sizes=True)
     model_hate.to(device)
     
     hate_acc, hate_f1, hate_report = evaluate_baseline(model_hate, thar_loader, device)
@@ -74,7 +74,7 @@ def run_baselines():
     sent_tokenized = tokenize_dataset(sent_ds, tokenizer, max_length=128)
     sent_loader = create_dataloader(sent_tokenized, batch_size=16, shuffle=False)
     
-    model_sent = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=3)
+    model_sent = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=3, ignore_mismatched_sizes=True)
     model_sent.to(device)
     
     sent_acc, sent_f1, sent_report = evaluate_baseline(model_sent, sent_loader, device)
