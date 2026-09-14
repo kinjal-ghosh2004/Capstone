@@ -27,8 +27,9 @@ def main():
     if not os.path.exists(corpus_path):
         raise FileNotFoundError(f"Corpus file not found at {corpus_path}. Please ensure all text data is combined into this file.")
         
-    print(f"Loading tokenizer from: {MODEL_NAME}")
-    tokenizer = get_tokenizer()
+    base_model_path = os.path.join(base_dir, 'Datasets', 'Pretraining')
+    print(f"Loading tokenizer from: {base_model_path}")
+    tokenizer = get_tokenizer(model_name=base_model_path)
 
     print(f"Loading raw text dataset from {corpus_path}...")
     # Load dataset using HF Datasets
@@ -45,7 +46,7 @@ def main():
     tokenized_datasets = split.map(tokenize_function, batched=True, remove_columns=["text"])
     
     print("Loading AutoModelForMaskedLM...")
-    model = AutoModelForMaskedLM.from_pretrained(MODEL_NAME)
+    model = AutoModelForMaskedLM.from_pretrained(base_model_path)
     
     # Data collator for Masked Language Modeling (15% masking probability)
     data_collator = DataCollatorForLanguageModeling(
