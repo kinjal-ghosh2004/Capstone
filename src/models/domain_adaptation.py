@@ -17,7 +17,7 @@ from data.tokenize_utils import get_tokenizer, MODEL_NAME
 def main():
     parser = argparse.ArgumentParser(description="Domain-Adaptive Pretraining (DAPT) for IndicBERT")
     parser.add_argument('--epochs', type=int, default=3, help="Number of training epochs")
-    parser.add_argument('--batch_size', type=int, default=16, help="Batch size for training")
+    parser.add_argument('--batch_size', type=int, default=4, help="Batch size for training")
     parser.add_argument('--lr', type=float, default=5e-5, help="Learning rate")
     args = parser.parse_args()
 
@@ -75,6 +75,7 @@ def main():
         # Memory & Performance Optimizations:
         optim="adamw_torch_fused",   # Faster optimizer implementation
         dataloader_num_workers=4,    # Parallelize data loading
+        gradient_accumulation_steps=4, # Reduces memory spike during DataParallel gather
     )
     
     trainer = Trainer(
