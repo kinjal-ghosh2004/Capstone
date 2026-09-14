@@ -47,8 +47,8 @@ def load_dravidian(file_path):
     """
     Load Dravidian Kannada, Malayalam, or Tamil CSV/TSV files.
     """
-    # They are tab separated with no header
-    df = pd.read_csv(file_path, sep='\t', header=None, names=['text', 'original_label'])
+    # They are tab separated with no header. We skip bad lines where there are unescaped tabs causing extra fields.
+    df = pd.read_csv(file_path, sep='\t', header=None, names=['text', 'original_label'], on_bad_lines='skip')
     df['label'] = df['original_label'].apply(map_hate)
     df = df.dropna(subset=['label'])
     df['label'] = df['label'].astype(int)
