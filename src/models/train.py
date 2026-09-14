@@ -1,7 +1,4 @@
 import os
-# Fix PyTorch CUDA fragmentation before importing torch
-os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-
 import argparse
 import sys
 import torch
@@ -71,7 +68,7 @@ def main():
     parser = argparse.ArgumentParser(description="Fine-tune IndicBERT for Code-Mixed Data")
     parser.add_argument('--task', type=str, required=True, choices=['hate', 'sentiment'], help="Task to train on")
     parser.add_argument('--epochs', type=int, default=3, help="Number of training epochs")
-    parser.add_argument('--batch_size', type=int, default=1, help="Batch size for training/eval")
+    parser.add_argument('--batch_size', type=int, default=16, help="Batch size for training/eval")
     parser.add_argument('--lr', type=float, default=2e-5, help="Learning rate")
     
     args = parser.parse_args()
@@ -127,8 +124,8 @@ def main():
     eval_ds = split['test']
     
     print("Tokenizing data...")
-    train_tokenized = tokenize_dataset(train_ds, tokenizer, max_length=128)
-    eval_tokenized = tokenize_dataset(eval_ds, tokenizer, max_length=128)
+    train_tokenized = tokenize_dataset(train_ds, tokenizer, max_length=256)
+    eval_tokenized = tokenize_dataset(eval_ds, tokenizer, max_length=256)
     
     # The tokenize_dataset formats for torch with specific columns, but Trainer handles HF datasets directly.
     # DataCollator automatically pads
@@ -167,10 +164,8 @@ def main():
         lr_scheduler_type="cosine",
         weight_decay=0.01,
         # Memory & Performance Optimizations:
-        optim="adafactor",           # Extremely memory-efficient optimizer
-        dataloader_num_workers=4,    # Parallelize data loading (safe on Windows within __main__)
-        gradient_accumulation_steps=16, # Accumulate gradients over 16 steps to simulate batch size of 16
-        gradient_checkpointing=True,   # Saves massive memory at the cost of slight compute overhead
+        optim="adamw_torch_fused",   # Faster optimizer implementation
+        dataloader_num_workers=4,    # Parallelize data loading
     )
     
     # 4. Initialize Trainer
