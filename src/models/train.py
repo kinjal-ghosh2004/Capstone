@@ -159,7 +159,6 @@ def main():
         load_best_model_at_end=True,
         metric_for_best_model="f1_macro",
         report_to="none", # no wandb for now
-        fp16=True,
         warmup_steps=100,
         lr_scheduler_type="cosine",
         weight_decay=0.01,
