@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 # IndicBERT tokenizer from local folder
 import os
 base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-MODEL_NAME = os.path.join(base_dir, 'Datasets', 'Pretraining')
+MODEL_NAME = os.path.join(base_dir, 'Datasets', 'Pretraining_Adapted')
 
 def get_tokenizer(model_name=MODEL_NAME):
     """
