@@ -1,4 +1,7 @@
 import os
+# Fix PyTorch CUDA fragmentation before importing torch
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
 import sys
 import argparse
 import torch
@@ -17,7 +20,7 @@ from data.tokenize_utils import get_tokenizer, MODEL_NAME
 def main():
     parser = argparse.ArgumentParser(description="Domain-Adaptive Pretraining (DAPT) for IndicBERT")
     parser.add_argument('--epochs', type=int, default=3, help="Number of training epochs")
-    parser.add_argument('--batch_size', type=int, default=16, help="Batch size for training")
+    parser.add_argument('--batch_size', type=int, default=1, help="Batch size for training")
     parser.add_argument('--lr', type=float, default=5e-5, help="Learning rate")
     args = parser.parse_args()
 
@@ -40,7 +43,7 @@ def main():
     print("Tokenizing data...")
     def tokenize_function(examples):
         # We don't pad here, DataCollatorForLanguageModeling will handle padding dynamically
-        return tokenizer(examples['text'], truncation=True, max_length=256)
+        return tokenizer(examples['text'], truncation=True, max_length=128)
         
     tokenized_datasets = split.map(tokenize_function, batched=True, remove_columns=["text"])
     
@@ -70,7 +73,12 @@ def main():
         fp16=True, # Mixed precision for faster training
         warmup_steps=500,
         weight_decay=0.01,
-        report_to="none"
+        report_to="none",
+        # Memory & Performance Optimizations:
+        optim="adafactor",           # Extremely memory-efficient optimizer
+        dataloader_num_workers=4,    # Parallelize data loading
+        gradient_accumulation_steps=16, # Accumulate gradients over 16 steps to simulate batch size of 16
+        gradient_checkpointing=True,   # Saves massive memory at the cost of slight compute overhead
     )
     
     trainer = Trainer(
