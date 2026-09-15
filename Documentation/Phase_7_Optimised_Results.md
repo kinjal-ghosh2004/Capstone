@@ -23,8 +23,15 @@ The newly adapted weights from DAPT were loaded into our downstream sequence cla
 - **Accuracy**: **79.6%**
 - **F1 (Macro)**: **78.5%**
 
+### 3. Downstream Fine-Tuning: Sentiment Analysis (IndicSentiment Dataset)
+The identical domain-adapted weights were successfully fine-tuned on the multi-lingual IndicSentiment dataset.
+
+#### Final Optimized Results (Post-DAPT):
+- **Accuracy**: **98.53%**
+- **F1 (Macro)**: **98.53%**
+
 ## Conclusion & Impact
 Implementing Domain-Adaptive Pretraining and resolving the multi-GPU memory bottlenecks led to a highly successful outcome. The combination of pre-learning the domain vocabulary and utilizing mixed-precision dual-GPU training resulted in a significant performance bump over the previous Phase 6 results (which peaked at 77.5% F1). 
 
-Achieving a Macro F1-score approaching 80% on highly unstructured, code-mixed social media text represents a very robust and robustly capable baseline model for production use cases.
+Achieving a Macro F1-score approaching 80% on highly unstructured, code-mixed Hate Speech text, and a staggering **98.53%** Macro F1 on multi-lingual Sentiment Analysis, proves that this DAPT-enabled IndicBERT architecture is a very robust and capable baseline model for production use cases.
 

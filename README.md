@@ -9,8 +9,8 @@ After applying Domain-Adaptive Pretraining (DAPT) and scaling across dual T4 GPU
   - Accuracy: **79.6%**
   - F1 (Macro): **78.5%**
 - **Sentiment Analysis (IndicSentiment)**
-  - Accuracy: **98.6%**
-  - F1 (Macro): **98.6%**
+  - Accuracy: **98.53%**
+  - F1 (Macro): **98.53%**
 
 ## 🏗️ Architecture & Pipeline
 1. **Domain-Adaptive Pretraining (DAPT)**: The base IndicBERT model is pre-trained using Masked Language Modeling (MLM) on a massive 500k+ sentence corpus of pure code-mixed text to learn the target domain.
