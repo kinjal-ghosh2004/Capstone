@@ -68,6 +68,7 @@ def main():
         save_strategy="epoch",
         logging_steps=50,
         load_best_model_at_end=True,
+        save_total_limit=1,
         fp16=True, # Mixed precision for faster training
         warmup_steps=500,
         weight_decay=0.01,

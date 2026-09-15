@@ -155,9 +155,10 @@ def main():
         learning_rate=args.lr,
         eval_strategy="epoch",
         save_strategy="epoch",
-        logging_steps=10,
+        logging_steps=50,
         load_best_model_at_end=True,
         metric_for_best_model="f1_macro",
+        save_total_limit=1,
         report_to="none", # no wandb for now
         fp16=True, # Mixed precision for faster training
         warmup_steps=100,
