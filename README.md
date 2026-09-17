@@ -6,11 +6,11 @@ This repository contains an advanced pipeline for training **IndicBERT** on high
 After applying Domain-Adaptive Pretraining (DAPT) and scaling across dual T4 GPUs, the model achieved the following metrics on the test splits:
 
 - **Hate Speech Detection (THAR Dataset)**
-  - Accuracy: **79.6%**
-  - F1 (Macro): **78.5%**
+  - Accuracy: **79.5%** (Test Split)
+  - F1 (Macro): **78.3%**
 - **Sentiment Analysis (IndicSentiment)**
-  - Accuracy: **98.53%**
-  - F1 (Macro): **98.53%**
+  - Accuracy: **98.8%** (Test Split)
+  - F1 (Binary Macro): **98.8%**
 
 ## 🏗️ Architecture & Pipeline
 1. **Domain-Adaptive Pretraining (DAPT)**: The base IndicBERT model is pre-trained using Masked Language Modeling (MLM) on a massive 500k+ sentence corpus of pure code-mixed text to learn the target domain.

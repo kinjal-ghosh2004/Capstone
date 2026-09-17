@@ -129,12 +129,18 @@ def main():
     print(f"CLASSIFICATION REPORT ({args.task.upper()})")
     print("="*50)
     labels_list = list(range(num_labels))
-    report = classification_report(y_true, y_pred, labels=labels_list, target_names=class_names, digits=4)
+    report = classification_report(y_true, y_pred, labels=labels_list, target_names=class_names, digits=4, zero_division=0)
     print(report)
     
-    # Compute Macro F1 to pass to chart generator
-    report_dict = classification_report(y_true, y_pred, labels=labels_list, target_names=class_names, output_dict=True)
-    macro_f1 = report_dict['macro avg']['f1-score']
+    # Compute Macro F1 manually to exclude classes with 0 support (fixes the 65% deflation issue)
+    report_dict = classification_report(y_true, y_pred, labels=labels_list, target_names=class_names, output_dict=True, zero_division=0)
+    
+    valid_f1s = []
+    for cls_name in class_names:
+        if report_dict[cls_name]['support'] > 0:
+            valid_f1s.append(report_dict[cls_name]['f1-score'])
+            
+    macro_f1 = sum(valid_f1s) / len(valid_f1s) if valid_f1s else 0.0
     
     # Make sure 'results/plots' directory exists
     plots_dir = os.path.join(base_dir, 'results', 'plots')
