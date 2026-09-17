@@ -98,7 +98,7 @@ def main():
                         if ds: ds_list.append(ds)
         dataset = concatenate_datasets(ds_list)
         num_labels = 3
-        class_names = ['Negative', 'Neutral', 'Positive']
+        class_names = ['Positive', 'Negative', 'Neutral']
         
     dataset = dataset.cast_column('label', ClassLabel(num_classes=num_labels))
     
