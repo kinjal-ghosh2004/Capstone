@@ -1,6 +1,6 @@
-# IndicBERT Domain-Adaptive Pretraining & Fine-Tuning on Code-Mixed Data
+# Sentiment Analysis and Hate Speech Detection in Code-Mixed Indian Languages
 
-This repository contains an advanced pipeline for training **IndicBERT** on highly unstructured, code-mixed social media text. It features a robust two-stage training process designed to adapt the model to domain-specific slang, emojis, and spelling variations, leading to state-of-the-art results on downstream tasks like **Hate Speech Detection** and **Sentiment Analysis**.
+This repository contains an advanced pipeline for Sentiment Analysis and Hate Speech Detection in Code-Mixed Indian Languages. The mentioned pipeline is built for training **IndicBERT** on highly unstructured, code-mixed social media text. It features a robust two-stage training process designed to adapt the model to domain-specific slang, emojis, and spelling variations, leading to state-of-the-art results on downstream tasks like **Hate Speech Detection** and **Sentiment Analysis**.
 
 ## 🚀 Key Results (Optimized Pipeline)
 After applying Domain-Adaptive Pretraining (DAPT) and scaling across dual T4 GPUs, the model achieved the following metrics on the test splits:
