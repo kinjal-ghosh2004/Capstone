@@ -26,4 +26,5 @@ Thumbs.db
 # Project specific
 # Ignore the results directory so you don't accidentally upload massive trained models to GitHub!
 results/
+!results/plots/
 

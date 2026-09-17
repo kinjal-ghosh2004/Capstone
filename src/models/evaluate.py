@@ -36,7 +36,7 @@ def plot_comparative_analysis(task, our_f1, output_path):
         f1_scores = [49.3, 36.0, our_f1 * 100]
         title = "Sentiment Analysis: Macro F1 Comparison"
 
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(8, 6))
     colors = ['#d3d3d3', '#a9a9a9', '#4c72b0']
     bars = plt.bar(labels, f1_scores, color=colors)
     plt.ylabel('Macro F1 Score (%)')

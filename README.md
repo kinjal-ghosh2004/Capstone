@@ -8,9 +8,20 @@ After applying Domain-Adaptive Pretraining (DAPT) and scaling across dual T4 GPU
 - **Hate Speech Detection (THAR Dataset)**
   - Accuracy: **79.5%** (Test Split)
   - F1 (Macro): **78.3%**
+  
+  <p align="center">
+    <img src="results/plots/comparison_hate.png" height="350" alt="Hate Speech F1 Comparison"/>
+    <img src="results/plots/cm_hate.png" height="350" alt="Hate Speech Confusion Matrix"/>
+  </p>
+
 - **Sentiment Analysis (IndicSentiment)**
   - Accuracy: **98.8%** (Test Split)
   - F1 (Binary Macro): **98.8%**
+
+  <p align="center">
+    <img src="results/plots/comparison_sentiment.png" height="350" alt="Sentiment Analysis F1 Comparison"/>
+    <img src="results/plots/cm_sentiment.png" height="350" alt="Sentiment Analysis Confusion Matrix"/>
+  </p>
 
 ## 🏗️ Architecture & Pipeline
 1. **Domain-Adaptive Pretraining (DAPT)**: The base IndicBERT model is pre-trained using Masked Language Modeling (MLM) on a massive 500k+ sentence corpus of pure code-mixed text to learn the target domain.
