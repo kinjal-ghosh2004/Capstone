@@ -13,8 +13,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from data.loaders import load_thar, load_indic_sentiment
 from data.tokenize_utils import get_tokenizer, tokenize_dataset
 
-def plot_confusion_matrix(y_true, y_pred, classes, title, output_path):
-    cm = confusion_matrix(y_true, y_pred)
+def plot_confusion_matrix(y_true, y_pred, classes, title, output_path, labels_list):
+    cm = confusion_matrix(y_true, y_pred, labels=labels_list)
     plt.figure(figsize=(8, 6))
     sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=classes, yticklabels=classes)
     plt.title(title)
@@ -128,18 +128,19 @@ def main():
     print("\n" + "="*50)
     print(f"CLASSIFICATION REPORT ({args.task.upper()})")
     print("="*50)
-    report = classification_report(y_true, y_pred, target_names=class_names, digits=4)
+    labels_list = list(range(num_labels))
+    report = classification_report(y_true, y_pred, labels=labels_list, target_names=class_names, digits=4)
     print(report)
     
     # Compute Macro F1 to pass to chart generator
-    report_dict = classification_report(y_true, y_pred, target_names=class_names, output_dict=True)
+    report_dict = classification_report(y_true, y_pred, labels=labels_list, target_names=class_names, output_dict=True)
     macro_f1 = report_dict['macro avg']['f1-score']
     
     # Make sure 'results/plots' directory exists
     plots_dir = os.path.join(base_dir, 'results', 'plots')
     os.makedirs(plots_dir, exist_ok=True)
     
-    plot_confusion_matrix(y_true, y_pred, class_names, f"Confusion Matrix: {args.task.capitalize()}", os.path.join(plots_dir, f"cm_{args.task}.png"))
+    plot_confusion_matrix(y_true, y_pred, class_names, f"Confusion Matrix: {args.task.capitalize()}", os.path.join(plots_dir, f"cm_{args.task}.png"), labels_list)
     plot_comparative_analysis(args.task, macro_f1, os.path.join(plots_dir, f"comparison_{args.task}.png"))
     
     print("\nEvaluation complete! Check the results/plots folder for visual charts.")
